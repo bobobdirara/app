@@ -1,261 +1,98 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#111111" />
-  <title>내부품질 기한관리</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <style>
-    :root { --text:#f3f4f6; --muted:#b8bcc6; --accent:#7c3aed; --line:#262a3a; }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      background:linear-gradient(180deg, #0b0c0f 0%, #0b0c0f 40%, #0a0b10 100%);
-      color:var(--text);
-      padding:18px 16px 28px;
-    }
-    .wrap{max-width:560px; margin:0 auto;}
-    h1{font-size:20px; margin:6px 0 14px; letter-spacing:-0.2px}
-    .sub{color:var(--muted); font-size:13px; margin:-6px 0 16px; line-height:1.45}
-    .card{
-      background:rgba(18,20,34,0.85);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:14px;
-      box-shadow: 0 10px 26px rgba(0,0,0,0.35);
-      backdrop-filter: blur(10px);
-    }
-    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
-    label{font-size:13px; color:var(--muted)}
-    input[type="date"]{
-      appearance:none;
-      background:#0f1120;
-      color:var(--text);
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 12px;
-      font-size:16px;
-      outline:none;
-      min-width: 190px;
-    }
-    button{
-      background:var(--accent);
-      border:none;
-      color:white;
-      border-radius:12px;
-      padding:10px 12px;
-      font-size:15px;
-      font-weight:600;
-      cursor:pointer;
-    }
-    button.secondary{
-      background:#1a1d2e;
-      border:1px solid var(--line);
-      color:var(--text);
-      font-weight:600;
-    }
-    .grid{display:grid; grid-template-columns: 1fr; gap:10px; margin-top:12px;}
-    .item{
-      display:flex; justify-content:space-between; align-items:center;
-      padding:12px 12px;
-      border-radius:14px;
-      background:#0f1120;
-      border:1px solid var(--line);
-    }
-    .k{font-size:14px; color:var(--muted)}
-    .v{font-size:15px; font-weight:650}
-    .small{font-size:12px; color:var(--muted); margin-top:10px; line-height:1.5}
-    .toast{
-      position:fixed; left:50%; transform:translateX(-50%);
-      bottom:18px; background:rgba(20,22,36,0.96);
-      border:1px solid var(--line);
-      color:var(--text);
-      padding:10px 12px; border-radius:14px;
-      font-size:13px; display:none;
-      box-shadow: 0 10px 26px rgba(0,0,0,0.35);
-    }
-    .badge{
-      display:inline-block; padding:4px 8px; border-radius:999px;
-      background:#14162a; border:1px solid var(--line);
-      color:var(--muted); font-size:12px; margin-left:8px;
-    }
-    .dow-0{ color:#ef4444; } /* 일 */
-    .dow-1{ color:#f97316; } /* 월 */
-    .dow-2{ color:#facc15; } /* 화 */
-    .dow-3{ color:#22c55e; } /* 수 */
-    .dow-4{ color:#3b82f6; } /* 목 */
-    .dow-5{ color:#1e3a8a; } /* 금 */
-    .dow-6{ color:#a855f7; } /* 토 */
-    .date-part{ color:var(--text); }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>내부품질 기한관리</title>
+
+<style>
+body{
+  font-family:-apple-system;
+  background:#111;
+  color:#fff;
+  padding:20px;
+}
+.card{
+  background:#1c1c1c;
+  padding:16px;
+  border-radius:14px;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  margin:8px 0;
+}
+.dow-0{color:#ff4d4d}
+.dow-1{color:#ff8c42}
+.dow-2{color:#ffd43b}
+.dow-3{color:#4cd964}
+.dow-4{color:#4dabf7}
+.dow-5{color:#364fc7}
+.dow-6{color:#b197fc}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <h1>내부품질 기한관리 <span class="badge">PWA</span></h1>
-    <div class="sub">
-      날짜 입력하면 <b>당일 포함</b> 기준으로 2/3/5/7/14일 뒤 + <b>한달 뒤(EDATE 1개월 - 1일)</b> 기한을 계산해줘.
-      <br/>예: 2/7 개봉 → 한달 뒤는 <b>3/6</b>.
-    </div>
 
-    <div class="card">
-      <div class="row" style="justify-content:space-between;">
-        <div>
-          <label for="baseDate">기준 날짜</label><br/>
-          <input id="baseDate" type="date" />
-        </div>
-        <div class="row" style="margin-top:20px;">
-          <button id="btnToday" title="오늘 날짜로 설정">오늘</button>
-          <button class="secondary" id="btnCopy" title="결과 복사">복사</button>
-        </div>
-      </div>
+<h2>내부품질 기한관리</h2>
 
-      <div class="grid" id="results" aria-live="polite"></div>
-
-      <div class="small">
-        설치: 사파리로 열기 → 공유 버튼 → <b>홈 화면에 추가</b><br/>
-        오프라인 캐시는 첫 접속/설치 때 저장됨.
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast"></div>
+<div class="card">
+<input type="date" id="date">
+<div id="result"></div>
+</div>
 
 <script>
-  const $ = (s) => document.querySelector(s);
-  const WEEKDAYS = ["일","월","화","수","목","금","토"];
-  const pad = (n) => String(n).padStart(2,"0");
+const WEEK=["일","월","화","수","목","금","토"];
 
-  function fmtParts(d){
-    const y = d.getFullYear();
-    const m = pad(d.getMonth()+1);
-    const day = pad(d.getDate());
-    const dow = d.getDay();
-    const w = WEEKDAYS[dow];
-    return { date: `${y}.${m}.${day}`, dow, w };
-  }
+function fmt(d){
+  const y=d.getFullYear();
+  const m=(d.getMonth()+1).toString().padStart(2,"0");
+  const da=d.getDate().toString().padStart(2,"0");
+  const w=d.getDay();
+  return `${y}.${m}.${da} (<span class="dow-${w}">${WEEK[w]}</span>)`;
+}
 
-  function addDays(baseDate, nInclusive){
-    const d = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
-    d.setDate(d.getDate() + (nInclusive - 1));
-    return d;
-  }
+function addDays(base,n){
+  const d=new Date(base);
+  d.setDate(d.getDate()+n-1);
+  return d;
+}
 
-  function monthInclusiveEnd(baseDate){
-    const y = baseDate.getFullYear();
-    const m = baseDate.getMonth();
-    const day = baseDate.getDate();
-    const targetMonthIndex = m + 1;
-    const targetYear = y + Math.floor(targetMonthIndex / 12);
-    const targetMonth = ((targetMonthIndex % 12) + 12) % 12;
+function addMonth(base,m){
+  const d=new Date(base);
+  d.setMonth(d.getMonth()+m);
+  d.setDate(d.getDate()-1);
+  return d;
+}
 
-    const lastDayTargetMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
-    const clampedDay = Math.min(day, lastDayTargetMonth);
+function render(base){
+  const r=document.getElementById("result");
+  r.innerHTML="";
 
-    const edate = new Date(targetYear, targetMonth, clampedDay);
-    edate.setDate(edate.getDate() - 1);
-    return edate;
-  }
-
-  const OFFSETS = [
-    { label: "2일 뒤", n: 2 },
-    { label: "3일 뒤", n: 3 },
-    { label: "5일 뒤", n: 5 },
-    { label: "7일 뒤", n: 7 },
-    { label: "14일 뒤", n: 14 },
+  const list=[
+    ["2일 뒤",addDays(base,2)],
+    ["3일 뒤",addDays(base,3)],
+    ["5일 뒤",addDays(base,5)],
+    ["7일 뒤",addDays(base,7)],
+    ["14일 뒤",addDays(base,14)],
+    ["한달 뒤",addMonth(base,1)],
+    ["3달 뒤",addMonth(base,2)] // ⭐ 여기 핵심 (2개월 + -1일 = 3달)
   ];
 
-  function row(k, d){
-    const {date, dow, w} = fmtParts(d);
-    const el = document.createElement("div");
-    el.className = "item";
-    el.innerHTML = `
-      <div class="k">${k}</div>
-      <div class="v">
-        <span class="date-part">${date}</span>
-        <span> (</span><span class="dow-${dow}">${w}</span><span>)</span>
-      </div>`;
-    return el;
-  }
-
-  function render(base){
-    const wrap = $("#results");
-    wrap.innerHTML = "";
-    OFFSETS.forEach(({label, n}) => wrap.appendChild(row(label, addDays(base, n))));
-    wrap.appendChild(row("한달 뒤", monthInclusiveEnd(base)));
-  }
-
-  function toast(msg){
-    const t = $("#toast");
-    t.textContent = msg;
-    t.style.display = "block";
-    clearTimeout(window.__toastTimer);
-    window.__toastTimer = setTimeout(()=>{ t.style.display="none"; }, 1600);
-  }
-
-  function toISODate(d){
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  }
-
-  function setBaseDate(d){
-    $("#baseDate").value = toISODate(d);
-    render(d);
-  }
-
-  function getBaseDate(){
-    const v = $("#baseDate").value;
-    if(!v) return null;
-    const [yy, mm, dd] = v.split("-").map(Number);
-    return new Date(yy, mm-1, dd);
-  }
-
-  $("#baseDate").addEventListener("change", () => {
-    const d = getBaseDate();
-    if(d) render(d);
+  list.forEach(v=>{
+    r.innerHTML+=`<div class="row"><span>${v[0]}</span><span>${fmt(v[1])}</span></div>`;
   });
+}
 
-  $("#btnToday").addEventListener("click", () => {
-    const now = new Date();
-    setBaseDate(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
-  });
+document.getElementById("date").addEventListener("change",e=>{
+  const [y,m,d]=e.target.value.split("-");
+  render(new Date(y,m-1,d));
+});
 
-  $("#btnCopy").addEventListener("click", async () => {
-    const d = getBaseDate();
-    if(!d){ toast("먼저 날짜 선택"); return; }
-
-    const baseP = fmtParts(d);
-    let lines = [];
-    lines.push(`기준: ${baseP.date} (${baseP.w})`);
-    OFFSETS.forEach(({label, n}) => {
-      const p = fmtParts(addDays(d,n));
-      lines.push(`${label}: ${p.date} (${p.w})`);
-    });
-    const mp = fmtParts(monthInclusiveEnd(d));
-    lines.push(`한달 뒤: ${mp.date} (${mp.w})`);
-    const text = lines.join("\\n");
-
-    try{
-      await navigator.clipboard.writeText(text);
-      toast("복사됨");
-    }catch(e){
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-      toast("복사됨");
-    }
-  });
-
-  const now = new Date();
-  setBaseDate(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
-
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js").catch(()=>{});
-    });
-  }
+const t=new Date();
+document.getElementById("date").value=t.toISOString().split("T")[0];
+render(t);
 </script>
+
 </body>
 </html>
