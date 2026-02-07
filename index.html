@@ -5,40 +5,46 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#111111" />
 <title>내부품질 기한관리</title>
-
 <link rel="manifest" href="manifest.webmanifest">
 
 <style>
+:root { --text:#f3f4f6; --muted:#b8bcc6; --line:#262a3a; --accent:#7c3aed; }
+
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont;
   background:#0f1115;
-  color:#fff;
-  padding:20px;
+  color:var(--text);
+  padding:18px;
 }
+
 .card{
   background:#1b1f27;
   border-radius:18px;
-  padding:18px;
+  padding:16px;
   box-shadow:0 8px 20px rgba(0,0,0,0.4);
 }
-input,button{
-  font-size:15px;
-  padding:8px 10px;
-  border-radius:10px;
-  border:none;
-}
-button{
-  background:#7c3aed;
-  color:#fff;
-  margin-left:6px;
-}
+
 .row{
   display:flex;
   justify-content:space-between;
   padding:10px 0;
   border-bottom:1px solid #2b2f3a;
 }
+
+input,button{
+  padding:8px 10px;
+  border-radius:10px;
+  border:none;
+  font-size:14px;
+}
+
+button{
+  background:var(--accent);
+  color:white;
+  margin-left:6px;
+}
+
 .dow-0{color:#ff4d4d}
 .dow-1{color:#ff8c42}
 .dow-2{color:#ffd43b}
@@ -58,7 +64,7 @@ button{
 <button id="todayBtn">오늘</button>
 <button id="copyBtn">복사</button>
 
-<div id="result" style="margin-top:12px"></div>
+<div id="result" style="margin-top:10px"></div>
 </div>
 
 <script>
@@ -86,9 +92,6 @@ function addMonth(base,m){
 }
 
 function render(base){
-  const r=document.getElementById("result");
-  r.innerHTML="";
-
   const list=[
     ["2일 뒤",addDays(base,2)],
     ["3일 뒤",addDays(base,3)],
@@ -99,6 +102,8 @@ function render(base){
     ["3달 뒤",addMonth(base,2)]
   ];
 
+  const r=document.getElementById("result");
+  r.innerHTML="";
   list.forEach(v=>{
     r.innerHTML+=`<div class="row"><span>${v[0]}</span><span>${fmt(v[1])}</span></div>`;
   });
@@ -126,7 +131,6 @@ const today=new Date();
 input.value=today.toISOString().split("T")[0];
 render(today);
 
-// PWA
 if("serviceWorker" in navigator){
   navigator.serviceWorker.register("./sw.js");
 }
