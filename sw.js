@@ -1,4 +1,4 @@
-const CACHE_NAME = "iq-expiry-pwa-v2";
+const CACHE_NAME = "iq-expiry-pwa-v3";
 const ASSETS = ["./index.html","./manifest.webmanifest","./sw.js"];
 
 self.addEventListener("install", (event) => {
