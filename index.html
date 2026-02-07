@@ -2,11 +2,15 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#111111" />
 <title>내부품질 기한관리</title>
+
+<link rel="manifest" href="manifest.webmanifest">
 
 <style>
 body{
+  margin:0;
   font-family:-apple-system,BlinkMacSystemFont;
   background:#0f1115;
   color:#fff;
@@ -18,15 +22,16 @@ body{
   padding:18px;
   box-shadow:0 8px 20px rgba(0,0,0,0.4);
 }
-h2{
-  margin-bottom:16px;
-}
-input{
-  font-size:16px;
-  padding:10px;
+input,button{
+  font-size:15px;
+  padding:8px 10px;
   border-radius:10px;
   border:none;
-  margin-bottom:14px;
+}
+button{
+  background:#7c3aed;
+  color:#fff;
+  margin-left:6px;
 }
 .row{
   display:flex;
@@ -34,11 +39,6 @@ input{
   padding:10px 0;
   border-bottom:1px solid #2b2f3a;
 }
-.row:last-child{
-  border:none;
-}
-
-/* 요일 색상 */
 .dow-0{color:#ff4d4d}
 .dow-1{color:#ff8c42}
 .dow-2{color:#ffd43b}
@@ -55,7 +55,10 @@ input{
 
 <div class="card">
 <input type="date" id="date">
-<div id="result"></div>
+<button id="todayBtn">오늘</button>
+<button id="copyBtn">복사</button>
+
+<div id="result" style="margin-top:12px"></div>
 </div>
 
 <script>
@@ -93,7 +96,7 @@ function render(base){
     ["7일 뒤",addDays(base,7)],
     ["14일 뒤",addDays(base,14)],
     ["한달 뒤",addMonth(base,1)],
-    ["3달 뒤",addMonth(base,2)] //
+    ["3달 뒤",addMonth(base,2)]
   ];
 
   list.forEach(v=>{
@@ -103,6 +106,17 @@ function render(base){
 
 const input=document.getElementById("date");
 
+document.getElementById("todayBtn").onclick=()=>{
+  const t=new Date();
+  input.value=t.toISOString().split("T")[0];
+  render(t);
+};
+
+document.getElementById("copyBtn").onclick=()=>{
+  navigator.clipboard.writeText(document.getElementById("result").innerText);
+  alert("복사됨");
+};
+
 input.addEventListener("change",e=>{
   const [y,m,d]=e.target.value.split("-");
   render(new Date(y,m-1,d));
@@ -111,6 +125,11 @@ input.addEventListener("change",e=>{
 const today=new Date();
 input.value=today.toISOString().split("T")[0];
 render(today);
+
+// PWA
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("./sw.js");
+}
 </script>
 
 </body>
