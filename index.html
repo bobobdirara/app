@@ -2,49 +2,40 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#111111" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>내부품질 기한관리</title>
 <link rel="manifest" href="manifest.webmanifest">
 
 <style>
-:root { --text:#f3f4f6; --muted:#b8bcc6; --line:#262a3a; --accent:#7c3aed; }
-
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont;
   background:#0f1115;
-  color:var(--text);
-  padding:18px;
+  color:#fff;
+  padding:20px;
 }
-
 .card{
   background:#1b1f27;
   border-radius:18px;
   padding:16px;
   box-shadow:0 8px 20px rgba(0,0,0,0.4);
 }
-
+input,button{
+  padding:8px 10px;
+  border-radius:10px;
+  border:none;
+}
+button{
+  background:#7c3aed;
+  color:white;
+  margin-left:6px;
+}
 .row{
   display:flex;
   justify-content:space-between;
   padding:10px 0;
   border-bottom:1px solid #2b2f3a;
 }
-
-input,button{
-  padding:8px 10px;
-  border-radius:10px;
-  border:none;
-  font-size:14px;
-}
-
-button{
-  background:var(--accent);
-  color:white;
-  margin-left:6px;
-}
-
 .dow-0{color:#ff4d4d}
 .dow-1{color:#ff8c42}
 .dow-2{color:#ffd43b}
@@ -63,12 +54,18 @@ button{
 <input type="date" id="date">
 <button id="todayBtn">오늘</button>
 <button id="copyBtn">복사</button>
-
 <div id="result" style="margin-top:10px"></div>
 </div>
 
 <script>
 const WEEK=["일","월","화","수","목","금","토"];
+
+function localISO(d){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const da=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${da}`;
+}
 
 function fmt(d){
   const y=d.getFullYear();
@@ -99,7 +96,7 @@ function render(base){
     ["7일 뒤",addDays(base,7)],
     ["14일 뒤",addDays(base,14)],
     ["한달 뒤",addMonth(base,1)],
-    ["3달 뒤",addMonth(base,2)]
+    ["3달 뒤",addMonth(base,3)]
   ];
 
   const r=document.getElementById("result");
@@ -113,7 +110,7 @@ const input=document.getElementById("date");
 
 document.getElementById("todayBtn").onclick=()=>{
   const t=new Date();
-  input.value=t.toISOString().split("T")[0];
+  input.value=localISO(t); // 
   render(t);
 };
 
@@ -128,7 +125,7 @@ input.addEventListener("change",e=>{
 });
 
 const today=new Date();
-input.value=today.toISOString().split("T")[0];
+input.value=localISO(today); // 
 render(today);
 
 if("serviceWorker" in navigator){
