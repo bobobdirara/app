@@ -1,0 +1,9 @@
+{
+  "name": "내부품질 기한관리",
+  "short_name": "기한관리",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0c0f",
+  "theme_color": "#111111",
+  "icons": []
+}
